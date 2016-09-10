@@ -1,0 +1,10 @@
+TRACEPOINT_EVENT(
+	my_provider,
+	my_tracepoint,
+	TP_ARGS(
+		char* , message
+	),
+	TP_FIELDS(
+		ctf_string(message_field, message)
+	)
+)

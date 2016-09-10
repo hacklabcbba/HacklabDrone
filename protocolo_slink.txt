@@ -1,0 +1,14 @@
+﻿- Estructura del paquete
+Nombre del campo         Indices(Bytes)        Tipo         Proposito
+Start of packet(SOP)     0,1                   uint8        Indican inicio de un nuevo paquete (0x73, 0x6c)
+Reserved                 2,3                   uint8        Bytes reservados para futuras funciones
+Length                   4:5                   uint16       Longitud del contenido util del paquete (n)
+Identifier               6:7                   uint16       Identificador del paquete
+Payload                  8,8+n                 uint8        Contenido util del paquete
+Checksum                 8+n:11+n              uint32       Validador del paquete (algoritmo crc32)
+
+- Campo Checksum
+Para asegurar la integridad del paquete un crc del 32 bits es calculado para cada mensaje en los últimos cuatro bytes, utilizando una implementación compatible con la biblioteca zlib.
+El cálculo de este crc empieza luego del SOP hasta el fin del Payload
+
+

@@ -1,0 +1,30 @@
+<!DOCTYPE Board_Memory_Definition_File>
+<Root name="STM32F746ZG">
+  <MemorySegment start="0xE0042000" name="DBG" size="0x10" />
+  <MemorySegment start="0xE0000000" name="PPB" size="0x100000" />
+  <MemorySegment start="0xD0000000" name="SDRAM2" size="$(SDRAM2_SIZE:0)" />
+  <MemorySegment start="0xC0000000" name="SDRAM1" size="$(SDRAM1_SIZE:0)" />
+  <MemorySegment start="0xA0001000" name="QUADSPI" size="0x400" />
+  <MemorySegment start="0xA0000000" name="FMC" size="0x1000" />
+  <MemorySegment start="0x90000000" name="$(QUADSPI_FLASH_NAME:QUADSPI_FLASH)" size="$(QUADSPI_FLASH_SIZE:0)" access="ReadOnly">
+    <ProgramSection alignment="4" load="Yes" name=".qspi" />
+  </MemorySegment>
+  <MemorySegment start="0x80000000" name="$(NAND_NAME:NAND)" size="$(NAND_SIZE:0)" access="ReadOnly" />
+  <MemorySegment start="0x6C000000" name="$(NOR_PSRAM4_NAME:NOR_PSRAM4)" size="$(NOR_PSRAM4_SIZE:0)" access="$(NOR_PSRAM4_ACCESS:Read/Write)" />
+  <MemorySegment start="0x68000000" name="$(NOR_PSRAM3_NAME:NOR_PSRAM3)" size="$(NOR_PSRAM3_SIZE:0)" access="$(NOR_PSRAM3_ACCESS:Read/Write)" />
+  <MemorySegment start="0x64000000" name="$(NOR_PSRAM2_NAM:NOR_PSRAM2)" size="$(NOR_PSRAM2_SIZE:0)" access="$(NOR_PSRAM2_ACCESS:Read/Write)" />
+  <MemorySegment start="0x60000000" name="$(NOR_PSRAM1_NAME:NOR_PSRAM1)" size="$(NOR_PSRAM1_SIZE:0)" access="$(NOR_PSRAM1_ACCESS:Read/Write)" />
+  <MemorySegment start="0x50000000" name="AHB2" size="0x60C00" />
+  <MemorySegment start="0x40020000" name="AHB1" size="0x60000" />
+  <MemorySegment start="0x40010000" name="APB2" size="0x6C00" />
+  <MemorySegment start="0x40000000" name="APB1" size="0x8000" />
+  <MemorySegment start="0x2004C000" name="SRAM2" size="0x4000" />
+  <MemorySegment start="0x20010000" name="SRAM1" size="0x3C000" />
+  <MemorySegment start="0x20000000" name="DTCM" size="0x10000" />
+  <MemorySegment start="0x20000000" name="RAM" size="0x50000" />
+  <MemorySegment start="0x1FF00000" name="OPTION" size="0x20" />
+  <MemorySegment start="0x1FF0F000" name="OTP" size="0x41F" />
+  <MemorySegment start="0x1FFF0000" name="SYSTEM" size="0xEDC0" />
+  <MemorySegment start="0x00200000" name="FLASH" size="0x100000" access="ReadOnly" />
+  <MemorySegment start="0x00000000" name="ITCM" size="0x4000" />
+</Root>

@@ -1,0 +1,29 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="HLDrone" target="8" version="2">
+  <configuration Name="THUMB Debug" inherited_configurations="THUMB;Debug" />
+  <configuration
+    Name="THUMB"
+    Platform="ARM"
+    arm_instruction_set="Thumb"
+    arm_library_instruction_set="Thumb"
+    c_preprocessor_definitions="__THUMB"
+    hidden="Yes" />
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG"
+    gcc_debugging_level="Level 3"
+    gcc_optimization_level="None"
+    hidden="Yes" />
+  <configuration
+    Name="THUMB Release"
+    inherited_configurations="THUMB;Release" />
+  <configuration
+    Name="Release"
+    c_preprocessor_definitions="NDEBUG"
+    gcc_debugging_level="Level 1"
+    gcc_optimization_level="Level 1"
+    hidden="Yes" />
+  <import file_name="Nucleo-F746ZG/Protocol/Rowley/TestProt.hzp" />
+  <import file_name="Nucleo-F429ZI/Protocol/Rowley/TestProt.hzp" />
+  <import file_name="Nucleo-F446RE/ProtocolSerial/Rowley/TestProt.hzp" />
+</solution>

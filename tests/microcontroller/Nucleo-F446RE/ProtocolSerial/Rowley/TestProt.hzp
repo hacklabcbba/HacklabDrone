@@ -1,0 +1,169 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="Nucleo-F446RE" target="8" version="2">
+  <project Name="TestProt">
+    <configuration
+      Family="STM32"
+      Name="Common"
+      Placement="Flash"
+      Target="STM32F446RE"
+      arm_architecture="v7EM"
+      arm_core_type="Cortex-M4"
+      arm_fp_abi="Hard"
+      arm_fpu_type="FPv4-SP-D16"
+      arm_gcc_target="arm-unknown-eabi"
+      arm_linker_heap_size="8192"
+      arm_linker_jtag_pad_pre_dr="1"
+      arm_linker_jtag_pad_pre_ir="5"
+      arm_linker_process_stack_size="0"
+      arm_linker_stack_size="2048"
+      arm_simulator_memory_simulation_filename="$(TargetsDir)/STM32/STM32SimulatorMemory$(HostDLL)"
+      arm_simulator_memory_simulation_parameter="STM32F446RE;0x80000;0x20000"
+      arm_target_connect_with_reset="Yes"
+      arm_target_debug_interface_type="ADIv5"
+      arm_target_interface_type="Default"
+      arm_target_loader_applicable_loaders="Flash"
+      arm_target_loader_default_loader="Flash"
+      arm_target_restrict_memory_accesses="Yes"
+      c_preprocessor_definitions="USE_STDPERIPH_DRIVER;STM32F446xx;HSE_VALUE=8000000"
+      c_user_include_directories="../Drivers/CMSIS/Include;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/STM32F4xx_StdPeriph_Driver/inc;../Inc;../../../../libs/inc;$(COMMONDIR)/Inc;$(MCUBASEDIR)/Libs/HAL/Include;$(MCUBASEDIR)/Libs/Drivers/Device/Include;$(MCUBASEDIR)/Libs/Drivers/Periph/Include;$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/include;$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/portable/GCC/ARM_CM4F/;$(MIDDLEWARESDIR)/$(TRACEDIR)/GenericRecorderLibSrc/Include"
+      debug_register_definition_file="$(TargetsDir)/STM32/STM32F446x_Peripherals.xml"
+      gcc_optimization_level="Level 1"
+      linker_memory_map_file="$(TargetsDir)/STM32/STM32F446RE_MemoryMap.xml"
+      linker_output_format="hex"
+      linker_section_placement_file="$(StudioDir)/targets/Cortex_M/flash_placement.xml"
+      macros="MIDDLEWARESDIR=../../../../../Third Party;FREERTOSDIR=FreeRTOSv8.2.3;TRACEDIR=Tracealyzer_v3.0.8;MCUBASEDIR=../../../;COMMONDIR=../../../Common/ProtocolSerial"
+      project_dependencies_can_build_in_parallel="Yes"
+      project_directory=""
+      project_type="Executable"
+      property_groups_file_path="$(TargetsDir)/STM32/propertyGroups.xml"
+      target_get_partname_script="GetPartName()"
+      target_match_partname_script="MatchPartName(&quot;$(Target)&quot;)"
+      target_script_file="$(TargetsDir)/STM32/STM32_Target.js"
+      target_trace_initialize_script="EnableTrace(&quot;$(TraceInterfaceType)&quot;)" />
+    <configuration
+      Name="Flash"
+      arm_target_flash_loader_file_path="$(LOADER:$(TargetsDir)/STM32/Release/STM32F2xx_Loader_rpc.elf)"
+      arm_target_loader_can_erase_all="Yes"
+      arm_target_loader_can_lock_all="No"
+      arm_target_loader_can_lock_range="No"
+      arm_target_loader_can_unlock_all="No"
+      arm_target_loader_can_unlock_range="No"
+      target_reset_script="FLASHReset()" />
+    <configuration Name="RAM" target_reset_script="Reset()" />
+    <folder Name="Source Files">
+      <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc" />
+      <folder Name="Middleware">
+        <folder Name="FreeRTOS">
+          <file file_name="$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/croutine.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/event_groups.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/list.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/queue.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/tasks.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/timers.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/portable/MemMang/heap_4.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(FREERTOSDIR)/Source/portable/GCC/ARM_CM4F/port.c" />
+        </folder>
+        <folder Name="FreeRTOS Trace Recorder">
+          <file file_name="$(MIDDLEWARESDIR)/$(TRACEDIR)/GenericRecorderLibSrc/trcBase.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(TRACEDIR)/GenericRecorderLibSrc/trcHardwarePort.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(TRACEDIR)/GenericRecorderLibSrc/trcKernel.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(TRACEDIR)/GenericRecorderLibSrc/trcKernelPortFreeRTOS.c" />
+          <file file_name="$(MIDDLEWARESDIR)/$(TRACEDIR)/GenericRecorderLibSrc/trcUser.c" />
+        </folder>
+      </folder>
+      <folder Name="Application/User">
+        <file file_name="../Inc/FreeRTOSConfig.h" />
+        <file file_name="../Inc/trcConfig.h" />
+        <folder
+          Name="General Libs"
+          exclude=""
+          filter="*.c;*.h"
+          path="../../../../libs/"
+          recurse="Yes" />
+        <file file_name="../Inc/main.h" />
+        <file file_name="../Src/stm32f4xx_msp.c" />
+        <file file_name="../Inc/stm32f4xx_conf.h" />
+        <folder Name="MCU Libs">
+          <folder Name="Drivers">
+            <folder Name="Device">
+              <file file_name="$(MCUBASEDIR)/Libs/Drivers/Device/hmc5983.c" />
+              <file file_name="$(MCUBASEDIR)/Libs/Drivers/Device/mpu9250.c" />
+              <file file_name="../../../Libs/Drivers/Device/mma7361.c" />
+            </folder>
+            <folder Name="Periph">
+              <file file_name="$(MCUBASEDIR)/Libs/Drivers/Periph/crossworks_debug.c" />
+              <file file_name="$(MCUBASEDIR)/Libs/Drivers/Periph/crossworksdebug_gpio.c" />
+              <file file_name="$(MCUBASEDIR)/Libs/Drivers/Periph/crossworksdebug_spi.c" />
+              <file file_name="$(MCUBASEDIR)/Libs/Drivers/Periph/dummy_gpio.c" />
+              <file file_name="$(MCUBASEDIR)/Libs/Drivers/Periph/dummy_spi.c" />
+              <file file_name="../../../Libs/Drivers/Periph/dummy_uart.c" />
+              <file file_name="../../../Libs/Drivers/Periph/dummy_adc.c" />
+            </folder>
+          </folder>
+          <folder Name="HAL">
+            <file file_name="$(MCUBASEDIR)/Libs/HAL/hal.c" />
+          </folder>
+        </folder>
+        <folder Name="Common">
+          <file file_name="$(COMMONDIR)/Src/freertos.c" />
+          <file file_name="$(COMMONDIR)/Src/main.c" />
+          <folder Name="Tasks">
+            <file file_name="$(COMMONDIR)/Src/Tasks/Other_Tasks.c" />
+            <file file_name="$(COMMONDIR)/Src/Tasks/Sensor_Tasks.c" />
+            <file file_name="$(COMMONDIR)/Src/Tasks/Control_Tasks.c" />
+            <file file_name="$(COMMONDIR)/Src/Tasks/Comm_Tasks.c" />
+          </folder>
+        </folder>
+        <file file_name="../Src/slink_user.c" />
+        <file file_name="../Src/serial.c" />
+        <file file_name="../Src/stm32_uart1.c" />
+        <file file_name="../Src/stm32_adc.c" />
+        <file file_name="../Src/gtime.c" />
+        <file file_name="../Src/stm32_gpio.c" />
+        <file file_name="../Src/stm32_rcout.c" />
+      </folder>
+      <folder Name="Drivers/CMSIS">
+        <file file_name="../Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c" />
+      </folder>
+      <folder Name="Drivers/STM32F4xx_StdPeriph_Driver">
+        <file file_name="../Drivers/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_usart.c" />
+        <file file_name="../Drivers/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.c" />
+        <file file_name="../Drivers/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.c" />
+        <file file_name="../Drivers/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.c" />
+        <file file_name="../Drivers/STM32F4xx_StdPeriph_Driver/src/misc.c" />
+        <file file_name="../Drivers/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_dma.c" />
+        <file file_name="../Drivers/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_adc.c" />
+      </folder>
+    </folder>
+    <folder Name="System Files">
+      <file file_name="$(StudioDir)/source/thumb_crt0.s" />
+      <file file_name="$(TargetsDir)/STM32/STM32_Startup.s" />
+    </folder>
+    <configuration
+      Name="Release"
+      c_preprocessor_definitions="STARTUP_FROM_RESET" />
+  </project>
+  <configuration Name="THUMB Debug" inherited_configurations="THUMB;Debug" />
+  <configuration
+    Name="THUMB"
+    Platform="ARM"
+    arm_instruction_set="Thumb"
+    arm_library_instruction_set="Thumb"
+    c_preprocessor_definitions="__THUMB"
+    hidden="Yes" />
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG"
+    gcc_debugging_level="Level 3"
+    gcc_optimization_level="None"
+    hidden="Yes" />
+  <configuration
+    Name="THUMB Release"
+    inherited_configurations="THUMB;Release" />
+  <configuration
+    Name="Release"
+    c_preprocessor_definitions="NDEBUG"
+    gcc_debugging_level="Level 1"
+    gcc_optimization_level="Level 1"
+    hidden="Yes" />
+</solution>
