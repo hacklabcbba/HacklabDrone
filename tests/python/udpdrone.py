@@ -2,25 +2,28 @@
 """
 @author: msquirogac
 """
-
 import socket
-from array import *
-
+import slink
 
 HOST, PORT = "169.254.1.1", 5000
+HOST, PORT = "127.0.0.1", 5000
 addr = (HOST, PORT)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("", PORT+1))
 
-#dataRaw = "0123456"
-#data = array('B', dataRaw.encode())
-#sock.sendto(data.tostring(), ('169.254.1.1', PORT))
+messageTX = slink.slink()
+messageTX.InitMessage()
+messageTX.SetIdentifier(0x1B)
+messageTX.LoadPayload(bytearray([51,52,53,54]))
+messageTX.EndMessage()
 
-data = bytes([0] * 10)
-sock.sendto(data, ('169.254.1.1', PORT))
+data = messageTX.Packet
+sock.sendto(data, addr)
 
-data = bytearray([0] * 10)
-sock.sendto(data, ('169.254.1.1', PORT))
+data = messageTX.Packet + bytes([0,0,0,0])
+messageRX = slink.slink()
+result, data = messageRX.ReceiveMessage(data)
 
 sock.close()
+

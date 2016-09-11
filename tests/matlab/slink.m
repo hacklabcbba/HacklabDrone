@@ -3,9 +3,10 @@ classdef slink < handle
     %   Detailed explanation goes here
     
     properties(Constant = true, Access = private)
-        LengthMax = 1000
-        InitChecksum = uint32(hex2dec('00000000'))
-        Preamble = struct('Sop', uint8(['s', 'l']), 'Reserved', uint8([255, 255]))
+        LENGTH_MAX = 1000
+        INIT_CHECKSUM = uint32(hex2dec('00000000'))
+        SOP = uint8(['s', 'l'])
+        PREAMBLE = [uint8(['s', 'l']), uint8([255, 255])]
     end
     
     properties(Access = public)
@@ -18,8 +19,8 @@ classdef slink < handle
     end
     
     properties(Access = private)
-        Context = struct('Length', 0, 'Identifier', 0, 'Control', struct('State', 1, 'DataIdx', 0))
         CRC = crc32
+        Context = struct('Control', struct('State', 0, 'DataIdx', 0), 'Identifier', 0, 'Length', 0)
     end
     
     methods
@@ -27,23 +28,23 @@ classdef slink < handle
             this.InitMessage();
         end
         function this = InitMessage(this)
-            this.Context.Length = 0;
-            this.Context.Identifier = 0;
             this.Context.Control.State = 1;
             this.Context.Control.DataIdx = 0;
+            this.Context.Identifier = 0;
+            this.Context.Length = 0;
             this.Identifier = 0;
             this.Payload = uint8([]);
             this.Packet = uint8([]);
         end
         function EndMessage(this)
-            preamble = [this.Preamble.Sop, this.Preamble.Reserved];
-            header = typecast([uint16(numel(this.Payload)), this.Identifier], 'uint8');
+            preamble = this.PREAMBLE;
             payload = this.Payload;
+            header = typecast([uint16(numel(payload)), this.Identifier], 'uint8');
             
-            packet = [header, payload];
-            checksum = this.CRC.Calculate(this.InitChecksum, packet);
+            packet = [preamble, header, payload];
+            checksum = this.CRC.Calculate(this.INIT_CHECKSUM, packet(5:end));
             checksum = typecast(bitcmp(checksum), 'uint8');
-            this.Packet = [preamble, packet, checksum];
+            this.Packet = [packet, checksum];
         end
         function LoadPayload(this, data)
             assert(isnumeric(data), 'Value must be ''numeric vector''.');
@@ -51,29 +52,29 @@ classdef slink < handle
         end
         function [result, rest] = ReceiveMessage(this, data)
             assert(isa(data, 'uint8'), 'Value must be ''uint8 vector''.');
-            rest = uint8([]); result = 0;
+            result = 0; rest = uint8([]);
             packet = this.Packet;
             state = this.Context.Control.State;
             dataIdx = this.Context.Control.DataIdx;
-            len = this.Context.Length;
             identifier = this.Context.Identifier;
+            len = this.Context.Length;
             for ii = 1:numel(data)
                 newByte = data(ii);
                 switch state
                     case 1,
                         % Sop byte 1
-                        if newByte == this.Preamble.Sop(1)
+                        if newByte == this.SOP(1)
                             packet = newByte;
                             packet(8) = uint8(0);
                             state = 2;
                         end
                     case 2,
                         % Sop byte 2
-                        if newByte == this.Preamble.Sop(2)
+                        if newByte == this.SOP(2)
                             packet(2) = newByte;
                             state = 3;
                         else
-                            rest = data(ii + 1:end); result = -1;
+                            result = -1; rest = data(ii + 1:end);
                             state = 1;
                             break
                         end
@@ -86,18 +87,18 @@ classdef slink < handle
                         packet(4) = newByte;
                         state = 5;
                     case 5,
-                        % Size byte 1
+                        % Length byte 1
                         packet(5) = newByte;
                         state = 6;
                     case 6,
-                        % Size byte 2
+                        % Length byte 2
                         packet(6) = newByte;
                         len = typecast(packet(5:6), 'uint16');
-                        if len <= this.LengthMax
+                        if len <= this.LENGTH_MAX
                             packet(8 + len + 4) = uint8(0);
                             state = 7;
                         else
-                            rest = data(ii + 1:end); result = -1;
+                            result = -1; rest = data(ii + 1:end);
                             state = 1;
                             break
                         end
@@ -113,25 +114,26 @@ classdef slink < handle
                         state = 9;
                     case 9,
                         % Data bytes
-                        packet(9 + dataIdx) = newByte;
-                        dataIdx = dataIdx + 1;
+                        numBytes = min(numel(data(ii:end)), numel(packet(9 + dataIdx:end)));
+                        packet(9 + dataIdx:8 + dataIdx + numBytes) = data(ii:ii + numBytes - 1);
+                        dataIdx = dataIdx + numBytes;
                         if dataIdx >= len + 4
                             % Calculate checksum
-                            checksum = this.CRC.Calculate(this.InitChecksum, packet(5:end));
+                            checksum = this.CRC.Calculate(this.INIT_CHECKSUM, packet(5:end));
                             
                             % Test checksum
                             if bitcmp(checksum) == 0
                                 this.Identifier = identifier;
-                                this.Payload = packet(9:8 + len);
-                                rest = data(ii + 1:end); result = 1;
+                                this.Payload = packet(9:end - 4);
+                                result = 1; rest = data(ii + numBytes:end);
                             else
-                                rest = data(ii + 1:end); result = -1;
+                                result = -1; rest = data(ii + numBytes:end);
                             end
                             state = 1;
                             break
                         end
                     otherwise
-                        rest = data(ii:end); result = -1;
+                        result = -1; rest = data(ii:end);
                         state = 1;
                         break
                 end
@@ -139,8 +141,8 @@ classdef slink < handle
             this.Packet = packet;
             this.Context.Control.State = state;
             this.Context.Control.DataIdx = dataIdx;
-            this.Context.Length = len;
             this.Context.Identifier = identifier;
+            this.Context.Length = len;
         end
     end
 end

@@ -32,3 +32,5 @@ target_link_libraries(demo sbuffer iscom slink debugHelper tpoint lttng-ust dl)
 add_executable(serialBridge ../serialBridge.c)
 target_link_libraries(serialBridge slink)
 
+add_executable(slinkBench ../slinkBench.c)
+target_link_libraries(slinkBench slink)
