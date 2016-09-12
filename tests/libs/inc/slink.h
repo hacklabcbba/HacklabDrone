@@ -1,8 +1,8 @@
 #ifndef __SLINK_H
 #define __SLINK_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,15 +44,12 @@ int32_t SLink_EndMessage(slink_message_t Message);
 /**********************************************************************************************/
 
 int16_t SLink_GetIdentifier(slink_message_t Message);
-
-void *SLink_GetPayload(slink_message_t Message);
-size_t SLink_GetPayloadSize(slink_message_t Message);
-size_t SLink_GetPayloadSizeMax(slink_message_t Message);
-
-void *SLink_GetPacket(slink_message_t Message);
-size_t SLink_GetPacketSize(slink_message_t Message);
-
 void SLink_SetIdentifier(slink_message_t Message, uint16_t Identifier);
+
+void *SLink_GetPayload(slink_message_t Message, size_t *size);
+void *SLink_GetPacket(slink_message_t Message, size_t *size);
+
+size_t SLink_GetPayloadSpaceLeft(slink_message_t Message);
 
 /**********************************************************************************************/
 

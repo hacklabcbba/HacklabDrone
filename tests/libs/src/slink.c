@@ -123,16 +123,16 @@ void SLink_Destroy(slink_message_t Message)
 void SLink_InitMessage(slink_message_t Message)
 {
 	Message->Context.Control.State = STATE_PREAM_BYTE1;
+	Message->Context.Control.DataIdx = 0;
+	Message->Context.Identifier = 0;
 	Message->Context.PacketSize = 0;
 	Message->Context.PayloadSize = 0;
-	Message->Context.Identifier = 0;
 }
 
 int32_t SLink_EndMessage(slink_message_t Message)
 {
 	Message->Context.Control.State = STATE_INIT;
 	Message->Context.PacketSize = SLINK_PACKET_MIN_SIZE + Message->Context.PayloadSize;
-
 	if(Message->Context.PayloadSize <= Message->PacketUnit.PayloadSizeMax)
 	{
 		Message->PacketUnit.Packet.Preamble.Sop[0] = SLINK_SOP_BYTE1;
@@ -160,34 +160,26 @@ inline int16_t SLink_GetIdentifier(slink_message_t Message)
 	return Message->Context.Identifier;
 }
 
-inline void *SLink_GetPayload(slink_message_t Message)
-{
-	return (void *)Message->PacketUnit.Packet.Data;
-}
-
-inline size_t SLink_GetPayloadSize(slink_message_t Message)
-{
-	return Message->Context.PayloadSize;
-}
-
-inline size_t SLink_GetPayloadSizeMax(slink_message_t Message)
-{
-	return Message->PacketUnit.PayloadSizeMax;
-}
-
-inline void *SLink_GetPacket(slink_message_t Message)
-{
-	return (void *)Message->PacketUnit.PacketRaw;
-}
-
-inline size_t SLink_GetPacketSize(slink_message_t Message)
-{
-	return Message->Context.PacketSize;
-}
-
 inline void SLink_SetIdentifier(slink_message_t Message, uint16_t Identifier)
 {
 	Message->Context.Identifier = Identifier;
+}
+
+inline void *SLink_GetPayload(slink_message_t Message, size_t *size)
+{
+	*size = Message->Context.PayloadSize;
+	return (void *)Message->PacketUnit.Packet.Data;
+}
+
+inline void *SLink_GetPacket(slink_message_t Message, size_t *size)
+{
+	*size = Message->Context.PacketSize;
+	return (void *)Message->PacketUnit.PacketRaw;
+}
+
+inline size_t SLink_GetPayloadSpaceLeft(slink_message_t Message)
+{
+	return (Message->PacketUnit.PayloadSizeMax - Message->Context.PayloadSize);
 }
 
 /**********************************************************************************************/

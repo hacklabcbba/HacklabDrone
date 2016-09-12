@@ -106,8 +106,8 @@ void COMMSendTask(void *param)
 				vTraceUserEvent(traceUserEvent2);
 
 				SLink_EndMessage(SLink_MessageTX);
-				size_t PacketSize = SLink_GetPacketSize(SLink_MessageTX);
-				uint8_t *pPacket = SLink_GetPacket(SLink_MessageTX);
+				size_t PacketSize;
+				uint8_t *pPacket = SLink_GetPacket(SLink_MessageTX, &PacketSize);
 				int32_t errComm = socketSendTo(UDPSocket, &remoteAddr, remotePort, pPacket, PacketSize, NULL, 0);
 				SendStats.PacketCount++;
 			}
@@ -148,8 +148,8 @@ void COMMRecvTask(void *param)
 				{
 					vTraceUserEvent(traceUserEvent2);
 
-					uint8_t *pPayload = SLink_GetPayload(SLink_MessageRX);
-					size_t PayloadSize = SLink_GetPayloadSize(SLink_MessageRX);
+					size_t PayloadSize;
+					uint8_t *pPayload = SLink_GetPayload(SLink_MessageRX, &PayloadSize);
 					uint16_t Identifier = SLink_GetIdentifier(SLink_MessageRX);
 					if(Identifier == 0xDB)
 					{
