@@ -72,7 +72,6 @@ class slink(object):
                 else:
                     result, rest = -1, data[ii+1:]
                     state = 1
-                    break
             elif state == 2:
                 # Reserved byte 1
                 packet[2] = newByte
@@ -95,7 +94,6 @@ class slink(object):
                 else:
                     result, rest = -1, data[ii+1:]
                     state = 0
-                    break
             elif state == 6:
                 # Identifier byte 1
                 packet[6] = newByte
@@ -123,10 +121,11 @@ class slink(object):
                     else:
                         result, rest = -1, data[ii+numBytes+1:]
                     state = 0
-                    break
             else:
                 result, rest = -1, data[ii:];
                 state = 0
+            if result != 0:
+                break
 
         self.Packet = packet
         self.__Context.Control.State = state

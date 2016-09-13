@@ -76,7 +76,6 @@ classdef slink < handle
                         else
                             result = -1; rest = data(ii + 1:end);
                             state = 1;
-                            break
                         end
                     case 3,
                         % Reserved byte 1
@@ -100,7 +99,6 @@ classdef slink < handle
                         else
                             result = -1; rest = data(ii + 1:end);
                             state = 1;
-                            break
                         end
                     case 7,
                         % Identifier byte 1
@@ -130,12 +128,13 @@ classdef slink < handle
                                 result = -1; rest = data(ii + numBytes:end);
                             end
                             state = 1;
-                            break
                         end
                     otherwise
                         result = -1; rest = data(ii:end);
                         state = 1;
-                        break
+                end
+                if result ~= 0
+                    break
                 end
             end
             this.Packet = packet;

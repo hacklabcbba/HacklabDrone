@@ -2,7 +2,6 @@ function slinkBench(cycles, payload, packetpad)
 if ~exist('cycles'), cycles = 100000; end
 if ~exist('payload'), payload = zeros(1, 100); end
 if ~exist('pad'), packetpad = [0,0,0,0]; end
-
 payload = uint8(payload);
 packetpad = uint8(packetpad);
 fprintf('Cycles: %d PayloadSize: %d PadSize: %d\n', cycles, numel(payload), numel(packetpad));

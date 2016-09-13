@@ -3,6 +3,8 @@ if ~exist('ip'), ip = '127.0.0.1'; end
 if ~exist('port'), port = 5000; end
 if ~exist('timeout'), timeout = 10; end
 if ~exist('numSample'), numSample = 500; end
+fprintf('Info: IP Address  = %s\n', ip);
+fprintf('Info: Port number = %d\n', port);
 
 import java.io.*
 import java.net.DatagramSocket
@@ -40,11 +42,17 @@ hold on; grid on;
 % Create graphics handles
 accelHandle = plot(zeros(numSample, 3));
 
-%% Setup timer
-t = timer('Period', 0.05, 'ExecutionMode', 'fixedRate');
-set(t, 'StartFcn', @initTimer);
-set(t, 'TimerFcn', @timerCallback);
-start(t);
+%% Setup timer draw
+timer20Hz = timer('Period', 0.05, 'ExecutionMode', 'fixedRate');
+set(timer20Hz, 'StartFcn', @timerInitCallback);
+set(timer20Hz, 'TimerFcn', @timerCallback);
+start(timer20Hz);
+
+%% Setup timer statistics
+timer1Hz = timer('Period', 1.0, 'ExecutionMode', 'fixedRate');
+set(timer1Hz, 'StartFcn', @timerInitCallback);
+set(timer1Hz, 'TimerFcn', @timerCallback);
+start(timer1Hz);
 
 %% Setup slink & iscom message
 message = iscom();
@@ -53,7 +61,8 @@ slinkMessageTX = slink();
 slinkMessageTX.InitMessage();
 slinkMessageTX.Identifier = 0;
 slinkMessageTX.EndMessage();
-
+RecvStats = struct('PacketCount', 0, 'PacketError', 0 ,'PacketRate', 0);
+RecvCount = 0;
 while true
     try
         socket.receive(udpPacketRX);
@@ -82,16 +91,13 @@ while true
                         end
                 end
             end
+            RecvStats.PacketCount = RecvStats.PacketCount + 1;
+        else
+            RecvStats.PacketError = RecvStats.PacketError + 1;
         end
     end
-    if t.UserData
-        % Send slink message
-        try
-            udpPacketTX.setData(slinkMessageTX.Packet);
-            socket.send(udpPacketTX);
-        end
-        
-        % Plot accel
+    if timer20Hz.UserData
+        % Update accel
         try
             if numel(data.accel)
                 tmp = data.accel(max(end - numSample + 1, 1):end);
@@ -101,25 +107,43 @@ while true
                 set(accelHandle(3), 'YData', tmpData(:, 3));
             end
         end
-        t.UserData = 0;
+        
+        % Plot
+        drawnow
+        timer20Hz.UserData = 0;
+    end
+    if timer1Hz.UserData
+        % Send slink message
+        try
+            udpPacketTX.setData(slinkMessageTX.Packet);
+            socket.send(udpPacketTX);
+        end
+        
+        % Network Statistics
+        RecvStats.PacketRate = RecvStats.PacketCount - RecvCount;
+        RecvCount = RecvStats.PacketCount;
+        fprintf('Recv rate: %d count: %d error: %d', RecvStats.PacketRate, RecvStats.PacketCount, RecvStats.PacketError);
+        fprintf('\n');
+        timer1Hz.UserData = 0;
     end
     if ~ishandle(fig)
         break;
     end
 end
 
-stop(t);
-delete(t);
+stop(timer20Hz);
+delete(timer20Hz);
+stop(timer1Hz);
+delete(timer1Hz);
 socket.close;
 end
 
-function initTimer(src, event)
+function timerInitCallback(src, event)
 src.UserData = 0;
 end
 
 function timerCallback(src, event)
 src.UserData = 1;
-drawnow;
 end
 
 function time = timeConvert(arg)

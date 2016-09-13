@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
 
 	/* Udp socket */
 	socketfd = Socket_Create();
-	Socket_Config(socketfd, portNumber+1);
+	Socket_Config(socketfd, 0);
 
 	/* Timer */
 	timerfd = Timer_Create();
