@@ -142,8 +142,8 @@ int main(int argc, char *argv[])
 					if(errSLink == SLINK_OK)
 					{
 						remoteAddr = remoteAddrTmp;
-						uint8_t *pPacket = SLink_GetPacket(MessageSocket);
-						size_t PacketSize = SLink_GetPacketSize(MessageSocket);
+						size_t PacketSize;
+						uint8_t *pPacket = SLink_GetPacket(MessageSocket, &PacketSize);
 						int errSerial = Serial_Send(serialfd, pPacket, PacketSize);
 						(void)errSerial; // unused var
 						SocketStats.PacketCount++;
@@ -167,8 +167,8 @@ int main(int argc, char *argv[])
 					int32_t errSLink = SLink_ReceiveMessageBlock(MessageSerial, BufferSerial, BufferSerialLen, &BufferSerialIdx);
 					if(errSLink == SLINK_OK)
 					{
-						uint8_t *pPacket = SLink_GetPacket(MessageSerial);
-						size_t PacketSize = SLink_GetPacketSize(MessageSerial);
+						size_t PacketSize;
+						uint8_t *pPacket = SLink_GetPacket(MessageSerial, &PacketSize);
 						int errSocket = Socket_Send(socketfd, &remoteAddr, pPacket, PacketSize);
 						(void)errSocket; // unused var
 						SerialStats.PacketCount++;

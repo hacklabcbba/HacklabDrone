@@ -1,4 +1,3 @@
-#include "slink.h"
 #include "stm32f4xx.h"
 #include "crc32.h"
 #include <string.h>

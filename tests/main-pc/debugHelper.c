@@ -12,7 +12,8 @@ void DEBUG_RawMessagePrint(void *buffer, size_t size)
 
 void DEBUG_SlinkMessagePrint(slink_message_t message)
 {
-	size_t payloadSize = SLink_GetPayloadSize(message);
+	size_t payloadSize;
+	SLink_GetPayload(message, &payloadSize);
 	uint16_t identifier = SLink_GetIdentifier(message);
 	printf("Identifier: 0x%04X Size: %zu", identifier, payloadSize);
 	printf("\r\n");

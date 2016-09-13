@@ -147,8 +147,8 @@ void COMMSendTask(slink_message_t SLink_MessageTX, int pipefd, int socketfd, str
 		if(errSLink == SLINK_OK)
 		{
 			SLink_EndMessage(SLink_MessageTX);
-			size_t PacketSize = SLink_GetPacketSize(SLink_MessageTX);
-			uint8_t *pPacket = SLink_GetPacket(SLink_MessageTX);
+			size_t PacketSize;
+			uint8_t *pPacket = SLink_GetPacket(SLink_MessageTX, &PacketSize);
 
 			/* Send message */
 			int errSocket = Socket_Send(socketfd, remoteAddr, pPacket, PacketSize);

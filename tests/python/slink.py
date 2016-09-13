@@ -1,14 +1,13 @@
 from struct import pack, unpack
-from crc32 import crc32
+import zlib
 
 class slink(object):
     LENGTH_MAX = 1000
-    INIT_CHECKSUM = 0xFFFFFFFF
+    INIT_CHECKSUM = 0x00000000
     SOP = bytes([0x73, 0x6c])
     PREAMBLE = SOP + bytes([255, 255])
 
     def __init__(self):
-        self.__crc = crc32()
         self.__Context = type('Context', (), {})
         self.__Context.Control = type('Control', (), {})
         self.InitMessage()
@@ -28,7 +27,7 @@ class slink(object):
         packet.extend(self.PREAMBLE)
         packet.extend(pack('2H', len(self.Payload), self.Identifier))
         packet.extend(self.Payload)
-        checksum = self.__crc.Calculate(self.INIT_CHECKSUM, packet[4:]) ^ 0xFFFFFFFF
+        checksum = zlib.crc32(packet[4:], self.INIT_CHECKSUM) ^ 0xFFFFFFFF
         packet.extend(pack('I', checksum))
         self.Packet = packet
 
@@ -114,7 +113,7 @@ class slink(object):
                 dataIdx += numBytes
                 if dataIdx >= length+4:
                     # Calculate checksum
-                    checksum = self.__crc.Calculate(self.INIT_CHECKSUM, packet[4:]) ^ 0xFFFFFFFF
+                    checksum = zlib.crc32(packet[4:], self.INIT_CHECKSUM) ^ 0xFFFFFFFF
 
                     # Test checksum
                     if checksum == 0:
