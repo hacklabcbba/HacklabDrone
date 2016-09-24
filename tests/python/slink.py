@@ -2,25 +2,26 @@ from struct import pack, unpack
 import zlib
 
 class slink(object):
-    LENGTH_MAX = 1000
-    INIT_CHECKSUM = 0x00000000
-    SOP = bytes([0x73, 0x6c])
-    PREAMBLE = SOP + bytes([255, 255])
+    LENGTH_MAX = 1000   # longitud del la carga util
+    INIT_CHECKSUM = 0x00000000 #valor inicial del checksum
+    SOP = bytes([0x73, 0x6c]) #bytes para marcar el inicio del paquete
+    PREAMBLE = SOP + bytes([255, 255]) #SOP y bytes de relleno 
 
     def __init__(self):
         self.__Context = type('Context', (), {})
         self.__Context.Control = type('Control', (), {})
-        self.InitMessage()
-
+        self.InitMessage() 
+    # Inicializa el mensaje a valores por defecto
     def InitMessage(self):
         self.__Context.Control.State = 0
         self.__Context.Control.DataIdx = 0
         self.__Context.Identifier = 0
         self.__Context.Length = 0
         self.Identifier = 0
-        self.Payload = bytearray()
-        self.Packet = bytearray()
-
+        self.Payload = bytearray() # Memoria donde se almacena la carga util
+        self.Packet = bytearray()  # Memoria donde se almacena el paquete serializado
+    
+    # Condensa y serializa el paquete
     def EndMessage(self):
         self.__Context.Control.State = 0
         packet = bytearray()
@@ -31,23 +32,27 @@ class slink(object):
         packet.extend(pack('I', checksum))
         self.Packet = packet
 
+	# obtiene el identidicador del paquete
     def GetIdentifier(self):
         return self.Identifier
-
+	
     def SetIdentifier(self, identifier):
         assert(isinstance(identifier, int))
         self.Identifier = identifier
 
+    # Asignar la carga al paquete
     def LoadPayload(self, payload):
         assert((isinstance(payload, bytes) | isinstance(payload, bytearray)))
         self.Payload.extend(payload)
-
+	
     def GetPayload(self):
         return self.Payload
 
     def GetPacket(self):
         return self.Packet
 
+
+	# Recibe un mensaje y lo decodifica
     def ReceiveMessage(self, data):
         assert((isinstance(data, bytes) | isinstance(data, bytearray)))
         result, rest = 0, bytearray([])
